@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from "./dto/create-supplier.dto";
 import { UpdateSupplierDto } from "./dto/update-supplier.dto";
+import { PaginationDto } from "src/common/dtos/pagination/pagination.dto";
 
-@Controller('suppliers') //TODO: http://localhosto:3000/suppliers
+@Controller('suppliers')
 export class SuppliersController {
 
     constructor( private readonly suppliersService: SuppliersService ){}
@@ -14,8 +15,8 @@ export class SuppliersController {
     }
 
     @Get()
-    findAll(){
-        return this.suppliersService.findAll();
+    findAll( @Query() paginationDto: PaginationDto ){
+        return this.suppliersService.findAll( paginationDto );
     }
 
     @Get(':id')

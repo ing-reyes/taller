@@ -3,6 +3,8 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryEntity } from './entities/category.entity';
 import { ManagerError } from 'src/common/errors/manager.error';
+import { ResponseAllCategories } from './interfaces/response-categories.interface';
+import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -15,7 +17,7 @@ export class CategoriesService {
     { id: 5, name: 'category5', description: 'dec5', isActive: true },
   ]
 
-  create(createCategoryDto: CreateCategoryDto) {
+  async create(createCategoryDto: CreateCategoryDto): Promise<CategoryEntity> {
     const category: CategoryEntity = {
       id: this.categories.length,
       ...createCategoryDto,
@@ -30,14 +32,38 @@ export class CategoriesService {
     }
   }
 
-  findAll() {
-    return this.categories;
+  async findAll(paginationDto: PaginationDto): Promise<ResponseAllCategories> {
+    const { limit, page } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    try {
+      if (this.categories.length === 0) {
+        throw new ManagerError({
+          type: 'NOT_FOUND',
+          message: 'Categories not found!',
+        })
+      }
+
+      const total = this.categories.filter((category) => category.isActive === true).length;
+      const lastPage = Math.ceil(total / limit);
+      const data = this.categories.filter((category) => category.isActive === true).slice(skip, limit);
+
+      return {
+        page,
+        limit,
+        lastPage,
+        total,
+        data
+      };
+    } catch (error) {
+      ManagerError.createSignatureError(error.message);
+    }
   }
 
-  findOne(id: number) {
+  async findOne(id: number): Promise<CategoryEntity> {
     try {
-      const category = this.categories.find((category)=>category.id===id);
-      if( !category ){
+      const category = this.categories.find((category) => category.id === id && category.isActive === true);
+      if (!category) {
         throw new ManagerError({
           type: 'NOT_FOUND',
           message: "Category not found",
@@ -51,10 +77,43 @@ export class CategoriesService {
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+    try {
+      const indexCategory = this.categories.findIndex((category) => category.id === id && category.isActive === true);
+      if (indexCategory === -1) {
+        throw new ManagerError({
+          type: 'NOT_FOUND',
+          message: 'Category not found',
+        });
+      }
+
+      this.categories[indexCategory] = {
+        ...this.categories[indexCategory],
+        ...updateCategoryDto,
+      }
+      return this.categories[indexCategory]
+    } catch (error) {
+      ManagerError.createSignatureError(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number): Promise<CategoryEntity> {
+    try {
+      const indexCategory = this.categories.findIndex((category) => category.id === id && category.isActive === true);
+      if (indexCategory === -1) {
+        throw new ManagerError({
+          type: 'NOT_FOUND',
+          message: 'Category not found',
+        });
+      }
+
+      this.categories[indexCategory] = {
+        ...this.categories[indexCategory],
+        isActive: false,
+      }
+
+      return this.categories[indexCategory]
+    } catch (error) {
+      ManagerError.createSignatureError(error.message);
+    }
   }
 }

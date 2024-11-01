@@ -11,52 +11,69 @@ import { CategoriesService } from '../categories/categories.service';
 export class ProductsService {
 
   private products: ProductEntity[] = [
-    { id: 1, name: 'product1', description: 'description1', price: 10, stock: 2, isActive: true , categoryId: 1},
-    { id: 2, name: 'product2', description: 'description2', price: 5, stock: 1, isActive: true , categoryId: 2},
-    { id: 3, name: 'product3', description: 'description3', price: 2, stock: 2, isActive: true , categoryId: 1},
-    { id: 4, name: 'product4', description: 'description4', price: 8, stock: 10, isActive: true , categoryId: 3},
+    { id: 1, name: 'product1', description: 'description1', price: 10, stock: 2, isActive: true, categoryId: 1 },
+    { id: 2, name: 'product2', description: 'description2', price: 5, stock: 1, isActive: true, categoryId: 2 },
+    { id: 3, name: 'product3', description: 'description3', price: 2, stock: 2, isActive: true, categoryId: 1 },
+    { id: 4, name: 'product4', description: 'description4', price: 8, stock: 10, isActive: true, categoryId: 3 },
     { id: 5, name: 'product5', description: 'description5', price: 15, stock: 2, isActive: false, categoryId: 1 },
     { id: 6, name: 'product6', description: 'description6', price: 15, stock: 2, isActive: false, categoryId: 4 },
-    { id: 7, name: 'product7', description: 'description7', price: 15, stock: 2, isActive: true , categoryId: 1},
+    { id: 7, name: 'product7', description: 'description7', price: 15, stock: 2, isActive: true, categoryId: 1 },
   ]
 
 
   constructor(
-    private readonly categoriesService:CategoriesService,
-  ){}
+    private readonly categoriesService: CategoriesService,
+  ) { }
 
 
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
-  }
-
-  async findAll( paginationDto: PaginationDto ): Promise<ResponseAllProducts> {
-    const { limit, page } = paginationDto;
-
+  async create(createProductDto: CreateProductDto): Promise<ProductEntity> {
     try {
-      if( this.products.length === 0 ){
-        throw new NotFoundException('Products not found!');
+      const product: ProductEntity = {
+        ...createProductDto,
+        isActive: true,
+        id: this.products.length + 1,
       }
 
-      const total = this.products.filter((product)=>product.isActive === true).length;
-      const lastPage = Math.ceil( total / limit );
+      this.products.push(product);
+
+      return product;
+    } catch (error) {
+      ManagerError.createSignatureError(error.message);
+    }
+  }
+
+  async findAll(paginationDto: PaginationDto): Promise<ResponseAllProducts> {
+    const { limit, page } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    try {
+      if (this.products.length === 0) {
+        throw new ManagerError({
+          type: 'NOT_FOUND',
+          message: 'Products not found!',
+        });
+      }
+
+      const total = this.products.filter((product) => product.isActive === true).length;
+      const lastPage = Math.ceil(total / limit);
+      const data = this.products.filter((product) => product.isActive === true).slice(skip, limit);
 
       return {
         page,
         limit,
         lastPage,
         total,
-        data: this.products.filter((product)=>product.isActive === true),
+        data,
       };
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      ManagerError.createSignatureError(error.message);
     }
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     try {
-      const product = this.products.find((product)=>product.id === id && product.isActive === true);
-      if( !product ){
+      const product = this.products.find((product) => product.id === id && product.isActive === true);
+      if (!product) {
         throw new ManagerError({
           type: 'NOT_FOUND',
           message: 'no se econtro el producto',
@@ -65,52 +82,54 @@ export class ProductsService {
 
       const category = this.categoriesService.findOne(product.categoryId);
       const { categoryId, ...rest } = product
-      return {
-        product: rest,
-        category
 
+      return {
+        ...rest,
+        category,
       };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto): Promise<ProductEntity> {
     try {
-      const product = this.products.find((product)=>product.id === id && product.isActive===true);
-      if( !product ){
+      const product = this.products.find((product) => product.id === id && product.isActive === true);
+      if (!product) {
         throw new NotFoundException('Product not found!');
       }
 
-      const index = this.products.findIndex((product)=>product.id === id && product.isActive===true);
+      const index = this.products.findIndex((product) => product.id === id && product.isActive === true);
 
       this.products[index] = {
-        id: product.id,
-        name: updateProductDto.name ?  updateProductDto.name : product.name,
-        description: updateProductDto.description ?  updateProductDto.description : product.description,
-        price: updateProductDto.price ?  updateProductDto.price : product.price,
-        stock: updateProductDto.stock ?  updateProductDto.stock : product.stock,
-        categoryId: updateProductDto.categoryId ?  updateProductDto.categoryId : product.categoryId,
-        isActive: product.isActive,
+        ...this.products[index],
+        ...updateProductDto,
       };
 
-      return `Product ${product.name} updated!`;
+      return this.products[index];
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      ManagerError.createSignatureError(error.message);
     }
   }
 
-  remove(id: number) {
+  async remove(id: number): Promise<ProductEntity> {
     try {
-      const product = this.products.find((product)=>product.id === id && product.isActive===true);
-      if( !product ){
-        throw new NotFoundException('Product not found!');
+      const indexProduct = this.products.findIndex((product) => product.id === id && product.isActive === true);
+      if (indexProduct === -1) {
+        throw new ManagerError({
+          type: 'NOT_FOUND',
+          message: 'Product not found',
+        });
       }
 
-      this.products = this.products.filter((product)=>product.id !== id);
-      return `Product ${product.name} deleted!`;
+      this.products[indexProduct] = {
+        ...this.products[indexProduct],
+        isActive: false,
+      }
+
+      return this.products[indexProduct]
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      ManagerError.createSignatureError(error.message);
     }
   }
 }
