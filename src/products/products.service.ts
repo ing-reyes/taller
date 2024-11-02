@@ -1,4 +1,5 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductEntity } from './entities/product.entity';
@@ -80,7 +81,7 @@ export class ProductsService {
         })
       }
 
-      const category = this.categoriesService.findOne(product.categoryId);
+      const category = await this.categoriesService.findOne(product.categoryId);
       const { categoryId, ...rest } = product
 
       return {
