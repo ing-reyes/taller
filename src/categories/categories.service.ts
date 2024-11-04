@@ -10,18 +10,18 @@ import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 export class CategoriesService {
 
   private categories: CategoryEntity[] = [
-    { id: 1, name: 'category1', description: 'dec1', isActive: true },
-    { id: 2, name: 'category2', description: 'dec2', isActive: true },
-    { id: 3, name: 'category3', description: 'dec3', isActive: true },
-    { id: 4, name: 'category4', description: 'dec4', isActive: true },
-    { id: 5, name: 'category5', description: 'dec5', isActive: true },
+    { id: '1', name: 'category1', description: 'dec1', isActive: true },
+    { id: '2', name: 'category2', description: 'dec2', isActive: true },
+    { id: '3', name: 'category3', description: 'dec3', isActive: true },
+    { id: '4', name: 'category4', description: 'dec4', isActive: true },
+    { id: '5', name: 'category5', description: 'dec5', isActive: true },
   ]
 
   async create(createCategoryDto: CreateCategoryDto): Promise<CategoryEntity> {
     const category: CategoryEntity = {
-      id: this.categories.length,
       ...createCategoryDto,
       isActive: true,
+      id: (+this.categories.length+1).toString(),
     }
     try {
       this.categories.push(category);
@@ -60,7 +60,7 @@ export class CategoriesService {
     }
   }
 
-  async findOne(id: number): Promise<CategoryEntity> {
+  async findOne(id: string): Promise<CategoryEntity> {
     try {
       const category = this.categories.find((category) => category.id === id && category.isActive === true);
       if (!category) {
@@ -76,7 +76,7 @@ export class CategoriesService {
     }
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  update(id: string, updateCategoryDto: UpdateCategoryDto) {
     try {
       const indexCategory = this.categories.findIndex((category) => category.id === id && category.isActive === true);
       if (indexCategory === -1) {
@@ -96,7 +96,7 @@ export class CategoriesService {
     }
   }
 
-  async remove(id: number): Promise<CategoryEntity> {
+  async remove(id: string): Promise<CategoryEntity> {
     try {
       const indexCategory = this.categories.findIndex((category) => category.id === id && category.isActive === true);
       if (indexCategory === -1) {

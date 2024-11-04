@@ -12,13 +12,13 @@ import { CategoriesService } from '../categories/categories.service';
 export class ProductsService {
 
   private products: ProductEntity[] = [
-    { id: 1, name: 'product1', description: 'description1', price: 10, stock: 2, isActive: true, categoryId: 1 },
-    { id: 2, name: 'product2', description: 'description2', price: 5, stock: 1, isActive: true, categoryId: 2 },
-    { id: 3, name: 'product3', description: 'description3', price: 2, stock: 2, isActive: true, categoryId: 1 },
-    { id: 4, name: 'product4', description: 'description4', price: 8, stock: 10, isActive: true, categoryId: 3 },
-    { id: 5, name: 'product5', description: 'description5', price: 15, stock: 2, isActive: false, categoryId: 1 },
-    { id: 6, name: 'product6', description: 'description6', price: 15, stock: 2, isActive: false, categoryId: 4 },
-    { id: 7, name: 'product7', description: 'description7', price: 15, stock: 2, isActive: true, categoryId: 1 },
+    { id: '1', name: 'product1', description: 'description1', price: 10, stock: 2, isActive: true,  },
+    { id: '1', name: 'product2', description: 'description2', price: 5, stock: 1, isActive: true,  },
+    { id: '3', name: 'product3', description: 'description3', price: 2, stock: 2, isActive: true,  },
+    { id: '4', name: 'product4', description: 'description4', price: 8, stock: 10, isActive: true,  },
+    { id: '5', name: 'product5', description: 'description5', price: 15, stock: 2, isActive: false,  },
+    { id: '6', name: 'product6', description: 'description6', price: 15, stock: 2, isActive: false,  },
+    { id: '7', name: 'product7', description: 'description7', price: 15, stock: 2, isActive: true,  },
   ]
 
 
@@ -32,7 +32,7 @@ export class ProductsService {
       const product: ProductEntity = {
         ...createProductDto,
         isActive: true,
-        id: this.products.length + 1,
+        id: (+this.products.length + 1).toString(),
       }
 
       this.products.push(product);
@@ -71,7 +71,7 @@ export class ProductsService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: string): Promise<ProductEntity> {
     try {
       const product = this.products.find((product) => product.id === id && product.isActive === true);
       if (!product) {
@@ -81,19 +81,14 @@ export class ProductsService {
         })
       }
 
-      const category = await this.categoriesService.findOne(product.categoryId);
-      const { categoryId, ...rest } = product
-
-      return {
-        ...rest,
-        category,
-      };
+      
+      return product
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto): Promise<ProductEntity> {
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<ProductEntity> {
     try {
       const product = this.products.find((product) => product.id === id && product.isActive === true);
       if (!product) {
@@ -113,7 +108,7 @@ export class ProductsService {
     }
   }
 
-  async remove(id: number): Promise<ProductEntity> {
+  async remove(id: string): Promise<ProductEntity> {
     try {
       const indexProduct = this.products.findIndex((product) => product.id === id && product.isActive === true);
       if (indexProduct === -1) {

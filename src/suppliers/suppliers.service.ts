@@ -11,10 +11,10 @@ import { ResponseAllSuppliers } from "./interfaces/response-suppliers.interface"
 export class SuppliersService {
 
     private suppliers: SupplierEntity[] = [
-        { id: 1, name: 'carlos', email: 'carlos@google.com', address: 'bobare', phone: '63262376', isActive: true },
-        { id: 2, name: 'maria', email: 'maria@google.com', address: 'bobare', phone: '63262376', isActive: true },
-        { id: 3, name: 'jose', email: 'jose@google.com', address: 'bobare', phone: '63262376', isActive: true },
-        { id: 4, name: 'marla', email: 'marla@google.com', address: 'bobare', phone: '63262376', isActive: true },
+        { id: '1', name: 'carlos', email: 'carlos@google.com', address: 'bobare', phone: '63262376', isActive: true },
+        { id: '2', name: 'maria', email: 'maria@google.com', address: 'bobare', phone: '63262376', isActive: true },
+        { id: '3', name: 'jose', email: 'jose@google.com', address: 'bobare', phone: '63262376', isActive: true },
+        { id: '4', name: 'marla', email: 'marla@google.com', address: 'bobare', phone: '63262376', isActive: true },
     ];
 
     async create(createSupplierDto: CreateSupplierDto): Promise<SupplierEntity> {
@@ -22,7 +22,7 @@ export class SuppliersService {
             const supplier: SupplierEntity = {
                 ...createSupplierDto,
                 isActive: true,
-                id: this.suppliers.length + 1,
+                id: (+this.suppliers.length + 1).toString(),
             }
 
             this.suppliers.push(supplier);
@@ -60,7 +60,7 @@ export class SuppliersService {
         }
     }
 
-    async findOne(id: number): Promise<SupplierEntity> {
+    async findOne(id: string): Promise<SupplierEntity> {
         try {
             const supplier = this.suppliers.find((supplier) => supplier.id === id && supplier.isActive === true);
             if (!supplier) {
@@ -75,7 +75,7 @@ export class SuppliersService {
         }
     }
 
-    async update(id: number, updateSupplierDto: UpdateSupplierDto): Promise<SupplierEntity> {
+    async update(id: string, updateSupplierDto: UpdateSupplierDto): Promise<SupplierEntity> {
         try {
             const indexSupplier = this.suppliers.findIndex((supplier) => supplier.id === id && supplier.isActive === true);
             if (indexSupplier === -1) {
@@ -95,7 +95,7 @@ export class SuppliersService {
         }
     }
 
-    async remove(id: number): Promise<SupplierEntity> {
+    async remove(id: string): Promise<SupplierEntity> {
         try {
             const indexSupplier = this.suppliers.findIndex((supplier) => supplier.id === id && supplier.isActive === true);
             if (indexSupplier === -1) {

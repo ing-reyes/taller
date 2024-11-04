@@ -1,9 +1,8 @@
 export class ProductEntity {
-    id: number;
+    id: string;
     name: string;
-    description: string;
-    price: number;
-    stock: number;
+    description?: string;
+    price?: number;
+    stock?: number;
     isActive: boolean;
-    categoryId: number;
 }
