@@ -77,7 +77,7 @@ export class ProductsService {
       if (!product) {
         throw new ManagerError({
           type: 'NOT_FOUND',
-          message: 'no se econtro el producto',
+          message: 'Product not found!',
         })
       }
 
