@@ -6,7 +6,7 @@ import { CategoriesService } from 'src/categories/categories.service';
 
 @Module({
   controllers: [ProductsController],
-  providers: [ProductsService, CategoriesService],
-  imports: [ ProductsModule, ]
+  providers: [ProductsService],
+  imports: []
 })
 export class ProductsModule {}

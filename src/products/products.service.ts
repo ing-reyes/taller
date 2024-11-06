@@ -19,12 +19,7 @@ export class ProductsService {
     { id: '5', name: 'product5', description: 'description5', price: 15, stock: 2, isActive: false,  },
     { id: '6', name: 'product6', description: 'description6', price: 15, stock: 2, isActive: false,  },
     { id: '7', name: 'product7', description: 'description7', price: 15, stock: 2, isActive: true,  },
-  ]
-
-
-  constructor(
-    private readonly categoriesService: CategoriesService,
-  ) { }
+  ];
 
 
   async create(createProductDto: CreateProductDto): Promise<ProductEntity> {
@@ -95,14 +90,14 @@ export class ProductsService {
         throw new NotFoundException('Product not found!');
       }
 
-      const index = this.products.findIndex((product) => product.id === id && product.isActive === true);
+      const indexProduct = this.products.findIndex((product) => product.id === id && product.isActive === true);
 
-      this.products[index] = {
-        ...this.products[index],
+      this.products[indexProduct] = {
+        ...this.products[indexProduct],
         ...updateProductDto,
       };
 
-      return this.products[index];
+      return this.products[indexProduct];
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
