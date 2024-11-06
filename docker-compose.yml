@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+  market_pg:
+    image: postgres:15.1
+    container_name: market_pg
+    environment:
+      POSTGRES_DB: market
+      POSTGRES_USER: umarket
+      POSTGRES_PASSWORD: secret123456
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
