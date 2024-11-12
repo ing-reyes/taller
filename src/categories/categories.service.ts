@@ -63,7 +63,7 @@ export class CategoriesService {
 
   async findOne(id: string): Promise<CategoryEntity> {
     try {
-      const category = await this.categoryRepository.findOne( { where: { id } } )
+      const category = await this.categoryRepository.findOne( { where: { id, isActive: true } } )
       if (!category) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -79,7 +79,7 @@ export class CategoriesService {
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<UpdateResult> {
     try {
-      const category = await this.categoryRepository.update(id, updateCategoryDto)
+      const category = await this.categoryRepository.update({id, isActive: true}, updateCategoryDto)
       if (category.affected === 0) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -95,7 +95,7 @@ export class CategoriesService {
 
   async remove(id: string): Promise<UpdateResult> {
     try {
-      const category = await this.categoryRepository.update(id, { isActive: false });
+      const category = await this.categoryRepository.update({id, isActive: true}, { isActive: false });
       if (category.affected === 0) {
         throw new ManagerError({
           type: 'NOT_FOUND',

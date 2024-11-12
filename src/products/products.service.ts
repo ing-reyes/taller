@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -6,32 +6,26 @@ import { ProductEntity } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination/pagination.dto';
 import { ResponseAllProducts } from './interfaces/response-products.interface';
 import { ManagerError } from 'src/common/errors/manager.error';
-import { CategoriesService } from '../categories/categories.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
 
-  private products: ProductEntity[] = [
-    { id: '1', name: 'product1', description: 'description1', price: 10, stock: 2, isActive: true,  },
-    { id: '1', name: 'product2', description: 'description2', price: 5, stock: 1, isActive: true,  },
-    { id: '3', name: 'product3', description: 'description3', price: 2, stock: 2, isActive: true,  },
-    { id: '4', name: 'product4', description: 'description4', price: 8, stock: 10, isActive: true,  },
-    { id: '5', name: 'product5', description: 'description5', price: 15, stock: 2, isActive: false,  },
-    { id: '6', name: 'product6', description: 'description6', price: 15, stock: 2, isActive: false,  },
-    { id: '7', name: 'product7', description: 'description7', price: 15, stock: 2, isActive: true,  },
-  ];
-
+  constructor(
+    @InjectRepository(ProductEntity)
+    private readonly productRepository: Repository<ProductEntity>,
+  ){}
 
   async create(createProductDto: CreateProductDto): Promise<ProductEntity> {
     try {
-      const product: ProductEntity = {
-        ...createProductDto,
-        isActive: true,
-        id: (+this.products.length + 1).toString(),
+      const product = await this.productRepository.save(createProductDto);
+      if( !product ){
+        throw new ManagerError({
+          type: 'CONFLICT',
+          message: 'Product not created!',
+        });
       }
-
-      this.products.push(product);
-
       return product;
     } catch (error) {
       ManagerError.createSignatureError(error.message);
@@ -43,16 +37,16 @@ export class ProductsService {
     const skip = (page - 1) * limit;
 
     try {
-      if (this.products.length === 0) {
-        throw new ManagerError({
-          type: 'NOT_FOUND',
-          message: 'Products not found!',
-        });
-      }
+      const [ total, data ] = await Promise.all([
+        this.productRepository.count( { where: { isActive: true } } ),
+        this.productRepository.createQueryBuilder('product')
+        .where({isActive: true})
+        .take(limit)
+        .skip(skip)
+        .getMany()
+      ]);
 
-      const total = this.products.filter((product) => product.isActive === true).length;
       const lastPage = Math.ceil(total / limit);
-      const data = this.products.filter((product) => product.isActive === true).slice(skip, limit);
 
       return {
         page,
@@ -68,7 +62,7 @@ export class ProductsService {
 
   async findOne(id: string): Promise<ProductEntity> {
     try {
-      const product = this.products.find((product) => product.id === id && product.isActive === true);
+      const product = await this.productRepository.findOne({where: {id, isActive: true}});
       if (!product) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -76,49 +70,39 @@ export class ProductsService {
         })
       }
 
-      
       return product
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<ProductEntity> {
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<UpdateResult> {
     try {
-      const product = this.products.find((product) => product.id === id && product.isActive === true);
-      if (!product) {
-        throw new NotFoundException('Product not found!');
+      const product = await this.productRepository.update( {id, isActive: true}, updateProductDto );
+      if ( product.affected === 0 ) {
+        throw new ManagerError({
+          type: 'NOT_FOUND',
+          message: 'Product not found!',
+        })
       }
 
-      const indexProduct = this.products.findIndex((product) => product.id === id && product.isActive === true);
-
-      this.products[indexProduct] = {
-        ...this.products[indexProduct],
-        ...updateProductDto,
-      };
-
-      return this.products[indexProduct];
+      return product;
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async remove(id: string): Promise<ProductEntity> {
+  async remove(id: string): Promise<UpdateResult> {
     try {
-      const indexProduct = this.products.findIndex((product) => product.id === id && product.isActive === true);
-      if (indexProduct === -1) {
+      const product = await this.productRepository.update({id, isActive:true},{isActive:false});
+      if ( product.affected === 0 ) {
         throw new ManagerError({
           type: 'NOT_FOUND',
           message: 'Product not found',
         });
       }
 
-      this.products[indexProduct] = {
-        ...this.products[indexProduct],
-        isActive: false,
-      }
-
-      return this.products[indexProduct]
+      return product;
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }

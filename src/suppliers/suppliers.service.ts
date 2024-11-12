@@ -1,35 +1,37 @@
 import { Injectable } from "@nestjs/common";
 
+import { Repository, UpdateResult } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+
 import { CreateSupplierDto } from "./dto/create-supplier.dto";
 import { UpdateSupplierDto } from "./dto/update-supplier.dto";
 import { SupplierEntity } from "./entities/supplier.entity";
-import { ManagerError } from "src/common/errors/manager.error";
+import { ManagerError } from "./../common/errors/manager.error";
 import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 import { ResponseAllSuppliers } from "./interfaces/response-suppliers.interface";
 
 @Injectable()
 export class SuppliersService {
 
-    private suppliers: SupplierEntity[] = [
-        { id: '1', name: 'carlos', email: 'carlos@google.com', address: 'bobare', phone: '63262376', isActive: true },
-        { id: '2', name: 'maria', email: 'maria@google.com', address: 'bobare', phone: '63262376', isActive: true },
-        { id: '3', name: 'jose', email: 'jose@google.com', address: 'bobare', phone: '63262376', isActive: true },
-        { id: '4', name: 'marla', email: 'marla@google.com', address: 'bobare', phone: '63262376', isActive: true },
-    ];
+    constructor(
+        @InjectRepository(SupplierEntity)
+        private readonly supplierRepository: Repository<SupplierEntity>,
+    ){}
 
     async create(createSupplierDto: CreateSupplierDto): Promise<SupplierEntity> {
         try {
-            const supplier: SupplierEntity = {
-                ...createSupplierDto,
-                isActive: true,
-                id: (+this.suppliers.length + 1).toString(),
-            }
+            const supplier = await this.supplierRepository.save(createSupplierDto);
 
-            this.suppliers.push(supplier);
+            if(!supplier){
+                throw new ManagerError({
+                    type: 'CONFLICT',
+                    message: 'Supplier not created!',
+                });
+            }
 
             return supplier;
         } catch (error) {
-
+            ManagerError.createSignatureError(error.message);
         }
     }
 
@@ -37,16 +39,13 @@ export class SuppliersService {
         const { limit, page } = paginationDto;
         const skip = (page - 1) * limit;
         try {
-            if (this.suppliers.length === 0) {
-                throw new ManagerError({
-                    type: 'NOT_FOUND',
-                    message: 'Suppliers not found!',
-                })
-            }
+            
+            const [total, data] = await Promise.all([
+                this.supplierRepository.count({ where: { isActive: true } }),
+                this.supplierRepository.find({where: {isActive: true}, take: limit, skip: skip}),
+            ]);
 
-            const total = this.suppliers.filter((supplier) => supplier.isActive === true).length;
             const lastPage = Math.ceil(total / limit);
-            const data = this.suppliers.filter((supplier) => supplier.isActive === true).slice(skip, limit);
 
             return {
                 page,
@@ -62,7 +61,7 @@ export class SuppliersService {
 
     async findOne(id: string): Promise<SupplierEntity> {
         try {
-            const supplier = this.suppliers.find((supplier) => supplier.id === id && supplier.isActive === true);
+            const supplier = await this.supplierRepository.findOne({where: { id: id, isActive: true }});
             if (!supplier) {
                 throw new ManagerError({
                     type: 'NOT_FOUND',
@@ -75,42 +74,33 @@ export class SuppliersService {
         }
     }
 
-    async update(id: string, updateSupplierDto: UpdateSupplierDto): Promise<SupplierEntity> {
+    async update(id: string, updateSupplierDto: UpdateSupplierDto): Promise<UpdateResult> {
         try {
-            const indexSupplier = this.suppliers.findIndex((supplier) => supplier.id === id && supplier.isActive === true);
-            if (indexSupplier === -1) {
+            const supplier = await this.supplierRepository.update({id, isActive: true}, updateSupplierDto);
+            if (supplier.affected === 0) {
                 throw new ManagerError({
                     type: 'NOT_FOUND',
                     message: 'Supplier not found',
                 });
             }
 
-            this.suppliers[indexSupplier] = {
-                ...this.suppliers[indexSupplier],
-                ...updateSupplierDto,
-            }
-            return this.suppliers[indexSupplier]
+            return supplier;
         } catch (error) {
             ManagerError.createSignatureError(error.message);
         }
     }
 
-    async remove(id: string): Promise<SupplierEntity> {
+    async remove(id: string): Promise<UpdateResult> {
         try {
-            const indexSupplier = this.suppliers.findIndex((supplier) => supplier.id === id && supplier.isActive === true);
-            if (indexSupplier === -1) {
+            const supplier = await this.supplierRepository.update({id, isActive: true}, {isActive: false});
+            if (supplier.affected === 0) {
                 throw new ManagerError({
                     type: 'NOT_FOUND',
                     message: 'Supplier not found',
                 });
             }
 
-            this.suppliers[indexSupplier] = {
-                ...this.suppliers[indexSupplier],
-                isActive: false,
-            }
-
-            return this.suppliers[indexSupplier]
+            return supplier;
 
         } catch (error) {
             ManagerError.createSignatureError(error.message);

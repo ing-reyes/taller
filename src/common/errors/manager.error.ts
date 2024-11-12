@@ -16,8 +16,8 @@ export class ManagerError extends Error {
         if (name) {
             throw new HttpException(
                 {
-                    status: HttpStatus[name],
-                    error: name,
+                    error: HttpStatus[name],
+                    statusCode: name,
                     message: description,
                 },
                 HttpStatus[name],
