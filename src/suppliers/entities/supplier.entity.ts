@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../common/config/base.entity';
+import { ProductEntity } from './../../products/entities/product.entity';
 
 @Entity('supplier')
 export class SupplierEntity extends BaseEntity {
@@ -14,4 +15,7 @@ export class SupplierEntity extends BaseEntity {
     
     @Column({type: 'varchar', nullable: true})
     address?: string;
+
+    @OneToMany(()=>ProductEntity, (products)=>products.supplier)
+    products: ProductEntity[];
 }

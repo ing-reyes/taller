@@ -41,6 +41,8 @@ export class ProductsService {
         this.productRepository.count( { where: { isActive: true } } ),
         this.productRepository.createQueryBuilder('product')
         .where({isActive: true})
+        .leftJoinAndSelect('product.category','category')
+        .leftJoinAndSelect('product.supplier','supplier')
         .take(limit)
         .skip(skip)
         .getMany()
@@ -62,7 +64,12 @@ export class ProductsService {
 
   async findOne(id: string): Promise<ProductEntity> {
     try {
-      const product = await this.productRepository.findOne({where: {id, isActive: true}});
+      const product = await this.productRepository.createQueryBuilder('product')
+      .where({id, isActive: true})
+      .leftJoinAndSelect('product.supplier','supplier')
+      .leftJoinAndSelect('product.category','category')
+      .getOne()
+
       if (!product) {
         throw new ManagerError({
           type: 'NOT_FOUND',

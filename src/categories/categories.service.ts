@@ -63,7 +63,10 @@ export class CategoriesService {
 
   async findOne(id: string): Promise<CategoryEntity> {
     try {
-      const category = await this.categoryRepository.findOne( { where: { id, isActive: true } } )
+      const category = await this.categoryRepository.createQueryBuilder('category')
+      .where({id, isActive:true})
+      .leftJoinAndSelect('category.products','products')
+      .getOne()
       if (!category) {
         throw new ManagerError({
           type: 'NOT_FOUND',

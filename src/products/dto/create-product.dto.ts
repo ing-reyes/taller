@@ -19,4 +19,12 @@ export class CreateProductDto {
     @IsOptional()
     @Min(0)
     unit?: number = 0;
+
+    @IsString()
+    @IsNotEmpty()
+    category: string;
+
+    @IsString()
+    @IsNotEmpty()
+    supplier: string;
 }
