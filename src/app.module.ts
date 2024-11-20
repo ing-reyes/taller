@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { DataSourceConfig } from './common/config/data.source';
 import { StocksModule } from './stocks/stocks.module';
 import { WarehousesModule } from './warehouses/warehouses.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [ 
@@ -20,7 +21,7 @@ import { WarehousesModule } from './warehouses/warehouses.module';
     ProductsModule, 
     CategoriesModule, 
     SuppliersModule, 
-    UsersModule, StocksModule, WarehousesModule,
+    UsersModule, StocksModule, WarehousesModule, AuthModule,
   ],
   controllers: [],
   providers: [],
