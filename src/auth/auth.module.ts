@@ -3,10 +3,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UsersModule } from './../users/users.module';
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtService],
+  providers: [AuthService, JwtService, AuthGuard, RoleGuard],
   imports: [ 
     UsersModule,
     JwtModule.register({
@@ -15,5 +17,6 @@ import { UsersModule } from './../users/users.module';
       signOptions: { expiresIn: '60s' },
     }),
    ],
+   exports: [AuthService, AuthGuard, RoleGuard ],
 })
 export class AuthModule {}
