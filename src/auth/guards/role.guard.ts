@@ -17,7 +17,6 @@ export class RoleGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest<Request>();
     const isAdmin = this.reflector.get<string>(ADMIN_KEY, context.getHandler());
-    const isUser = this.reflector.get<string>(USER_KEY, context.getHandler());
     const isPublic = this.reflector.get<boolean>(PUBLIC_KEY, context.getHandler());
     const isRoles = this.reflector.get<Array<keyof typeof UserRole>>(UserRole, context.getHandler());
     
@@ -37,6 +36,8 @@ export class RoleGuard implements CanActivate {
   
         throw new ManagerError({type: 'UNAUTHORIZED', message: 'Unauthorized!'});
       }
+
+      if( user.role === UserRole.ADMIN ) return true;
 
       const isAuth = isRoles.some((rol)=>rol===user.role);
       if(!isAuth) {
