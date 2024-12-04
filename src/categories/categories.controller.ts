@@ -6,6 +6,7 @@ import { PaginationDto } from './../common/dtos/pagination/pagination.dto';
 import { AuthGuard } from './../auth/guards/auth.guard';
 import { RoleGuard } from './../auth/guards/role.guard';
 import { AdminAccess } from './../auth/decorators/admin.decorator';
+import { PublicAccess } from 'src/auth/decorators/public.decorator';
 
 @Controller('categories')
 @UseGuards(AuthGuard, RoleGuard)
@@ -19,11 +20,13 @@ export class CategoriesController {
   }
 
   @Get()
+  @PublicAccess()
   findAll( @Query() paginationDto: PaginationDto ) {
     return this.categoriesService.findAll( paginationDto );
   }
 
   @Get(':id')
+  @PublicAccess()
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.categoriesService.findOne(id);
   }
