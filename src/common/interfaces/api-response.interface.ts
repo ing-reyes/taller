@@ -9,7 +9,7 @@ interface Metadata {
 
 interface Status {
     statusMsg: keyof typeof HttpStatus;
-    statusCode: number;
+    statusCode: HttpStatus;
     error: string | null;
 }
 

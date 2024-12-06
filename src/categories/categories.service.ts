@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryEntity } from './entities/category.entity';
-import { ManagerError } from 'src/common/errors/manager.error';
+import { ManagerError } from './../common/errors/manager.error';
 import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApiAllResponse, ApiOneResponse } from 'src/common/interfaces/api-response.interface';
+import { ApiAllResponse, ApiOneResponse } from './../common/interfaces/api-response.interface';
 
 @Injectable()
 export class CategoriesService {
@@ -30,7 +30,7 @@ export class CategoriesService {
       return {
         status: {
           statusMsg: 'CREATED',
-          statusCode: 201,
+          statusCode: HttpStatus.CREATED,
           error: null,
         },
         data: category,
@@ -58,8 +58,8 @@ export class CategoriesService {
 
       return {
         status: {
-          statusMsg: 'ACCEPTED',
-          statusCode: 202,
+          statusMsg: 'OK',
+          statusCode: HttpStatus.OK,
           error: null,
         },
         meta: {
@@ -90,8 +90,8 @@ export class CategoriesService {
 
       return {
         status: {
-          statusMsg: 'ACCEPTED',
-          statusCode: 200,
+          statusMsg: 'OK',
+          statusCode: HttpStatus.OK,
           error: null,
         },
         data: category,
@@ -101,7 +101,7 @@ export class CategoriesService {
     }
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<UpdateResult> {
+  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<ApiOneResponse<UpdateResult>> {
     try {
       const category = await this.categoryRepository.update({id, isActive: true}, updateCategoryDto)
       if (category.affected === 0) {
@@ -111,13 +111,20 @@ export class CategoriesService {
         });
       }
 
-      return category;
+      return {
+        status: {
+          statusMsg: "OK",
+          statusCode: HttpStatus.OK,
+          error: null,
+        },
+        data: category,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async remove(id: string): Promise<UpdateResult> {
+  async remove(id: string): Promise<ApiOneResponse<UpdateResult>> {
     try {
       const category = await this.categoryRepository.update({id, isActive: true}, { isActive: false });
       if (category.affected === 0) {
@@ -127,7 +134,14 @@ export class CategoriesService {
         });
       }
 
-      return category;
+      return {
+        status: {
+          statusMsg: "OK",
+          statusCode: HttpStatus.OK,
+          error: null,
+        },
+        data: category,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }

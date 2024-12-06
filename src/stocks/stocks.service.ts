@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -8,6 +8,7 @@ import { StockEntity } from './entities/stock.entity';
 import { ManagerError } from './../common/errors/manager.error';
 import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 import { ResponseAllStocks } from './interfaces/response-stocks.interface';
+import { ApiAllResponse, ApiOneResponse } from 'src/common/interfaces/api-response.interface';
 
 @Injectable()
 export class StocksService {
@@ -17,7 +18,7 @@ export class StocksService {
     private readonly stockRepository: Repository<StockEntity>,
   ) { }
 
-  async create(createStockDto: CreateStockDto): Promise<StockEntity> {
+  async create(createStockDto: CreateStockDto): Promise<ApiOneResponse<StockEntity>> {
 
     try {
       const stock = await this.stockRepository.save(createStockDto);
@@ -28,13 +29,20 @@ export class StocksService {
         });
       }
 
-      return stock;
+      return {
+        status: {
+          statusMsg: "CREATED",
+          statusCode: HttpStatus.CREATED,
+          error: null,
+        },
+        data: stock,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<ResponseAllStocks> {
+  async findAll(paginationDto: PaginationDto): Promise<ApiAllResponse<StockEntity>> {
     const { limit, page } = paginationDto;
     const skip = (page - 1) * limit;
 
@@ -48,18 +56,25 @@ export class StocksService {
       const lastPage = Math.ceil(total / limit);
 
       return {
-        page,
-        limit,
-        lastPage,
-        total,
-        data
+        status: {
+          statusMsg: "OK",
+          statusCode: HttpStatus.OK,
+          error: null,
+        },
+        meta: {
+          page,
+          limit,
+          lastPage,
+          total,
+        },
+        data,
       };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async findOne(id: string): Promise<StockEntity> {
+  async findOne(id: string): Promise<ApiOneResponse<StockEntity>> {
     try {
       const stock = await this.stockRepository.createQueryBuilder('stock')
       .where({id, isActive:true})
@@ -71,13 +86,20 @@ export class StocksService {
         })
       }
 
-      return stock
+      return {
+        status: {
+          statusMsg: "OK",
+          statusCode: HttpStatus.OK,
+          error: null,
+        },
+        data: stock,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async update(id: string, updateStockDto: UpdateStockDto):Promise<UpdateResult> {
+  async update(id: string, updateStockDto: UpdateStockDto):Promise<ApiOneResponse<UpdateResult>> {
     try {
       const stock = await this.stockRepository.update({id, isActive: true}, updateStockDto)
       if (stock.affected === 0) {
@@ -87,13 +109,20 @@ export class StocksService {
         });
       }
 
-      return stock;
+      return {
+        status: {
+          statusMsg: "OK",
+          statusCode: HttpStatus.OK,
+          error: null,
+        },
+        data: stock,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async remove(id: string):Promise<UpdateResult> {
+  async remove(id: string):Promise<ApiOneResponse<UpdateResult>> {
     try {
       const stock = await this.stockRepository.update({id, isActive: true}, { isActive: false });
       if (stock.affected === 0) {
@@ -103,7 +132,14 @@ export class StocksService {
         });
       }
 
-      return stock;
+      return {
+        status: {
+          statusMsg: "OK",
+          statusCode: HttpStatus.OK,
+          error: null,
+        },
+        data: stock,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
