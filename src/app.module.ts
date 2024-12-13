@@ -10,6 +10,9 @@ import { DataSourceConfig } from './common/config/data.source';
 import { StocksModule } from './stocks/stocks.module';
 import { WarehousesModule } from './warehouses/warehouses.module';
 import { AuthModule } from './auth/auth.module';
+import { CustomersModule } from './customers/customers.module';
+import { PurchasesModule } from './purchases/purchases.module';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 
 @Module({
   imports: [ 
@@ -21,7 +24,7 @@ import { AuthModule } from './auth/auth.module';
     ProductsModule, 
     CategoriesModule, 
     SuppliersModule, 
-    UsersModule, StocksModule, WarehousesModule, AuthModule,
+    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule,
   ],
   controllers: [],
   providers: [],
