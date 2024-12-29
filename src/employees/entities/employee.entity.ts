@@ -6,7 +6,7 @@ export class EmployeeEntity extends BaseEntity {
     @Column({ type: "varchar", length: 100, nullable: false })
     name: string;
 
-    @Column({ type: "timestamp", length: 100, nullable: false })
+    @Column({ type: "timestamp", nullable: false })
     birthDate: Date;
 
     @Column({ type: "varchar", length: 100, nullable: false })
