@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "./../../common/config/base.entity";
 import { CustomerEntity } from "./../../customers/entities/customer.entity";
 import { EmployeeEntity } from "./../../employees/entities/employee.entity";
 import { ShipperEntity } from "./../../shippers/entities/shipper.entity";
+import { DeliveryOrderEntity } from "./../../delivery-orders/entities/delivery-order.entity";
 
 @Entity({ name: "order" })
 export class OrderEntity extends BaseEntity {
@@ -18,4 +19,7 @@ export class OrderEntity extends BaseEntity {
     @ManyToOne(()=> ShipperEntity, (shipper) => shipper.orders)
     @JoinColumn({ name: "shipper_id" })
     shipper:string;
+
+    @OneToMany(() => DeliveryOrderEntity, (deliveryOrder) => deliveryOrder.order)
+    deliveryOrders: DeliveryOrderEntity;
 }

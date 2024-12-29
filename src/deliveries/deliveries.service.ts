@@ -15,6 +15,7 @@ export class DeliveriesService {
     @InjectRepository(DeliveryEntity)
     private readonly deliveriesRepository: Repository<DeliveryEntity>
   ) { }
+  
   async create(createDeliveryDto: CreateDeliveryDto): Promise<ApiOneResponse<DeliveryEntity>> {
     try {
       const delivery = await this.deliveriesRepository.save(createDeliveryDto);

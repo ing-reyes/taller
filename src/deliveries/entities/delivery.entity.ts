@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BaseEntity } from "./../../common/config/base.entity";
 import { ShipperEntity } from "./../../shippers/entities/shipper.entity";
+import { DeliveryOrderEntity } from "./../../delivery-orders/entities/delivery-order.entity";
 
 @Entity("delivery")
 export class DeliveryEntity extends BaseEntity {
@@ -13,4 +14,7 @@ export class DeliveryEntity extends BaseEntity {
 
     @Column({ type: "float", default: 0 })
     shoppingCost: number;
+
+    @OneToMany(() => DeliveryOrderEntity, (deliveryOrder) => deliveryOrder.delivery)
+    deliveryOrders: DeliveryOrderEntity;
 }

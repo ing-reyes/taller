@@ -17,6 +17,7 @@ import { EmployeesModule } from './employees/employees.module';
 import { ShippersModule } from './shippers/shippers.module';
 import { OrdersModule } from './orders/orders.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
+import { DeliveryOrdersModule } from './delivery-orders/delivery-orders.module';
 
 @Module({
   imports: [ 
@@ -28,7 +29,7 @@ import { DeliveriesModule } from './deliveries/deliveries.module';
     ProductsModule, 
     CategoriesModule, 
     SuppliersModule, 
-    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule, EmployeesModule, ShippersModule, OrdersModule, DeliveriesModule,
+    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule, EmployeesModule, ShippersModule, OrdersModule, DeliveriesModule, DeliveryOrdersModule,
   ],
   controllers: [],
   providers: [],
