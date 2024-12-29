@@ -4,6 +4,7 @@ import { SupplierEntity } from "./../../suppliers/entities/supplier.entity";
 import { CategoryEntity } from "./../../categories/entities/category.entity";
 import { StockEntity } from "./../../stocks/entities/stock.entity";
 import { OrderDetailEntity } from "./../../order-details/entities/order-detail.entity";
+import { DiscountProductEntity } from "./../../discount-products/entities/discount-product.entity";
 
 @Entity('product')
 export class ProductEntity extends BaseEntity {
@@ -32,4 +33,7 @@ export class ProductEntity extends BaseEntity {
 
     @OneToMany(()=>OrderDetailEntity, (orderDetail)=>orderDetail.product)
     orderDetails: OrderDetailEntity[];
+
+    @OneToMany(()=>DiscountProductEntity, (discountProduct)=>discountProduct.product)
+    discountProducts: DiscountProductEntity[];
 }
