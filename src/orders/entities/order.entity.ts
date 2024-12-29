@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntity } from "./../../common/config/base.entity";
 import { CustomerEntity } from "./../../customers/entities/customer.entity";
 import { EmployeeEntity } from "./../../employees/entities/employee.entity";
@@ -16,5 +16,6 @@ export class OrderEntity extends BaseEntity {
     employee:string;
     
     @ManyToOne(()=> ShipperEntity, (shipper) => shipper.orders)
+    @JoinColumn({ name: "shipper_id" })
     shipper:string;
 }

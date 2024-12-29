@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from "typeorm";
 import { BaseEntity } from "./../../common/config/base.entity";
 import { OrderEntity } from "./../../orders/entities/order.entity";
+import { DeliveryEntity } from "./../../deliveries/entities/delivery.entity";
 
 @Entity("shipper")
 export class ShipperEntity extends BaseEntity {
@@ -12,4 +13,7 @@ export class ShipperEntity extends BaseEntity {
 
     @OneToMany(() => OrderEntity, (order) => order.shipper)
     orders: OrderEntity[];
+
+    @OneToMany(() => DeliveryEntity, (delivery) => delivery.shipper)
+    delivery: DeliveryEntity
 }
