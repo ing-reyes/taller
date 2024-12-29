@@ -16,10 +16,10 @@ export class DiscountEntity extends BaseEntity {
     @Column({ type: "float", nullable: false })
     amount: number;
 
-    @Column({ type: "date", nullable: false })
+    @Column({ type: "timestamp", nullable: false })
     startDate: Date;
 
-    @Column({ type: "date", nullable: false })
+    @Column({ type: "timestamp", nullable: false })
     endDate: Date;
 
     @OneToMany(() => DiscountProductEntity, (discountProduct) => discountProduct.discount)
