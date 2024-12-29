@@ -4,6 +4,7 @@ import { CustomerEntity } from "./../../customers/entities/customer.entity";
 import { EmployeeEntity } from "./../../employees/entities/employee.entity";
 import { ShipperEntity } from "./../../shippers/entities/shipper.entity";
 import { DeliveryOrderEntity } from "./../../delivery-orders/entities/delivery-order.entity";
+import { OrderDetailEntity } from "./../../order-details/entities/order-detail.entity";
 
 @Entity({ name: "order" })
 export class OrderEntity extends BaseEntity {
@@ -22,4 +23,7 @@ export class OrderEntity extends BaseEntity {
 
     @OneToMany(() => DeliveryOrderEntity, (deliveryOrder) => deliveryOrder.order)
     deliveryOrders: DeliveryOrderEntity;
+
+    @OneToMany(() => OrderDetailEntity, (orderDetail) => orderDetail.order)
+    orderDetails: OrderDetailEntity[];
 }

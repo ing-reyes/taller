@@ -3,6 +3,7 @@ import { BaseEntity } from "./../../common/config/base.entity";
 import { SupplierEntity } from "./../../suppliers/entities/supplier.entity";
 import { CategoryEntity } from "./../../categories/entities/category.entity";
 import { StockEntity } from "./../../stocks/entities/stock.entity";
+import { OrderDetailEntity } from "./../../order-details/entities/order-detail.entity";
 
 @Entity('product')
 export class ProductEntity extends BaseEntity {
@@ -28,4 +29,7 @@ export class ProductEntity extends BaseEntity {
 
     @OneToMany(()=>StockEntity, (stocks)=>stocks.product)
     stocks: StockEntity[];
+
+    @OneToMany(()=>OrderDetailEntity, (orderDetail)=>orderDetail.product)
+    orderDetails: OrderDetailEntity[];
 }
