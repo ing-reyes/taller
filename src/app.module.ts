@@ -19,6 +19,7 @@ import { OrdersModule } from './orders/orders.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { DeliveryOrdersModule } from './delivery-orders/delivery-orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
+import { DiscountsModule } from './discounts/discounts.module';
 
 @Module({
   imports: [ 
@@ -30,7 +31,7 @@ import { OrderDetailsModule } from './order-details/order-details.module';
     ProductsModule, 
     CategoriesModule, 
     SuppliersModule, 
-    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule, EmployeesModule, ShippersModule, OrdersModule, DeliveriesModule, DeliveryOrdersModule, OrderDetailsModule,
+    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule, EmployeesModule, ShippersModule, OrdersModule, DeliveriesModule, DeliveryOrdersModule, OrderDetailsModule, DiscountsModule,
   ],
   controllers: [],
   providers: [],
