@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { CustomersModule } from './customers/customers.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { EmployeesModule } from './employees/employees.module';
 
 @Module({
   imports: [ 
@@ -24,7 +25,7 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
     ProductsModule, 
     CategoriesModule, 
     SuppliersModule, 
-    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule,
+    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule, EmployeesModule,
   ],
   controllers: [],
   providers: [],
