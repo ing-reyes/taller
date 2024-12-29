@@ -48,6 +48,8 @@ export class DiscountProductsService {
       const [total, data] = await Promise.all([
         this.discountProductsRepository.count({ where: { isActive: true } }),
         this.discountProductsRepository.createQueryBuilder("discountProduct")
+          .leftJoinAndSelect("discountProduct.product", "product")
+          .leftJoinAndSelect("discountProduct.discount", "discount")
           .where({ isActive: true })
           .skip(skip)
           .limit(limit)
@@ -76,6 +78,8 @@ export class DiscountProductsService {
   async findOne(id: string): Promise<ApiOneResponse<DiscountProductEntity>> {
     try {
       const discountProduct = await this.discountProductsRepository.createQueryBuilder("discountProduct")
+        .leftJoinAndSelect("discountProduct.product", "product")
+        .leftJoinAndSelect("discountProduct.discount", "discount")
         .where({ id, isActive: true })
         .getOne();
 
