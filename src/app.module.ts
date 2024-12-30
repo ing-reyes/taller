@@ -23,16 +23,30 @@ import { DiscountsModule } from './discounts/discounts.module';
 import { DiscountProductsModule } from './discount-products/discount-products.module';
 
 @Module({
-  imports: [ 
+  imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${ process.env.NODE_ENV.trim() }`,
+      envFilePath: `.env.${process.env.NODE_ENV.trim()}`,
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(DataSourceConfig),
-    ProductsModule, 
-    CategoriesModule, 
-    SuppliersModule, 
-    UsersModule, StocksModule, WarehousesModule, AuthModule, CustomersModule, PurchasesModule, PaymentMethodsModule, EmployeesModule, ShippersModule, OrdersModule, DeliveriesModule, DeliveryOrdersModule, OrderDetailsModule, DiscountsModule, DiscountProductsModule,
+    ProductsModule,
+    CategoriesModule,
+    SuppliersModule,
+    UsersModule,
+    StocksModule,
+    WarehousesModule,
+    AuthModule,
+    CustomersModule,
+    PurchasesModule,
+    PaymentMethodsModule,
+    EmployeesModule,
+    ShippersModule,
+    OrdersModule,
+    DeliveriesModule,
+    DeliveryOrdersModule,
+    OrderDetailsModule,
+    DiscountsModule,
+    DiscountProductsModule,
   ],
   controllers: [],
   providers: [],

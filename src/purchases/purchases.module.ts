@@ -7,8 +7,6 @@ import { PurchaseEntity } from './entities/purchase.entity';
 @Module({
   controllers: [PurchasesController],
   providers: [PurchasesService],
-  imports: [
-    TypeOrmModule.forFeature([PurchaseEntity]),
-  ]
+  imports: [TypeOrmModule.forFeature([PurchaseEntity])],
 })
 export class PurchasesModule {}

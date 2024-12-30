@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { WarehousesService } from './warehouses.service';
 import { CreateWarehouseDto } from './dto/create-warehouse.dto';
 import { UpdateWarehouseDto } from './dto/update-warehouse.dto';
@@ -14,7 +24,7 @@ export class WarehousesController {
   }
 
   @Get()
-  findAll( @Query() paginationDto: PaginationDto ) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.warehousesService.findAll(paginationDto);
   }
 
@@ -24,7 +34,10 @@ export class WarehousesController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateWarehouseDto: UpdateWarehouseDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateWarehouseDto: UpdateWarehouseDto,
+  ) {
     return this.warehousesService.update(id, updateWarehouseDto);
   }
 

@@ -2,7 +2,10 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 
-import { ApiAllResponse, ApiOneResponse } from 'src/common/interfaces/api-response.interface';
+import {
+  ApiAllResponse,
+  ApiOneResponse,
+} from 'src/common/interfaces/api-response.interface';
 import { CreateDiscountProductDto } from './dto/create-discount-product.dto';
 import { DiscountProductEntity } from './entities/discount-product.entity';
 import { ManagerError } from '../common/errors/manager.error';
@@ -13,43 +16,49 @@ import { UpdateDiscountProductDto } from './dto/update-discount-product.dto';
 export class DiscountProductsService {
   constructor(
     @InjectRepository(DiscountProductEntity)
-    private readonly discountProductsRepository: Repository<DiscountProductEntity>
-  ) { }
+    private readonly discountProductsRepository: Repository<DiscountProductEntity>,
+  ) {}
 
-  async create(createDiscountProductDto: CreateDiscountProductDto): Promise<ApiOneResponse<DiscountProductEntity>> {
+  async create(
+    createDiscountProductDto: CreateDiscountProductDto,
+  ): Promise<ApiOneResponse<DiscountProductEntity>> {
     try {
-      const discountProduct = await this.discountProductsRepository.save(createDiscountProductDto);
+      const discountProduct = await this.discountProductsRepository.save(
+        createDiscountProductDto,
+      );
       if (!discountProduct) {
         throw new ManagerError({
-          type: "CONFLICT",
-          message: "Product discount not created!",
-        })
+          type: 'CONFLICT',
+          message: 'Product discount not created!',
+        });
       }
 
       return {
         status: {
-          statusMsg: "CREATED",
+          statusMsg: 'CREATED',
           statusCode: HttpStatus.CREATED,
           error: null,
         },
         data: discountProduct,
-      }
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<ApiAllResponse<DiscountProductEntity>> {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<ApiAllResponse<DiscountProductEntity>> {
     const { limit, page } = paginationDto;
     const skip = (page - 1) * limit;
 
     try {
-
       const [total, data] = await Promise.all([
         this.discountProductsRepository.count({ where: { isActive: true } }),
-        this.discountProductsRepository.createQueryBuilder("discountProduct")
-          .leftJoinAndSelect("discountProduct.product", "product")
-          .leftJoinAndSelect("discountProduct.discount", "discount")
+        this.discountProductsRepository
+          .createQueryBuilder('discountProduct')
+          .leftJoinAndSelect('discountProduct.product', 'product')
+          .leftJoinAndSelect('discountProduct.discount', 'discount')
           .where({ isActive: true })
           .skip(skip)
           .limit(limit)
@@ -58,7 +67,7 @@ export class DiscountProductsService {
       const lastPage = Math.ceil(page / limit);
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
@@ -66,10 +75,10 @@ export class DiscountProductsService {
           page,
           lastPage,
           limit,
-          total
+          total,
         },
-        data
-      }
+        data,
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
@@ -77,50 +86,57 @@ export class DiscountProductsService {
 
   async findOne(id: string): Promise<ApiOneResponse<DiscountProductEntity>> {
     try {
-      const discountProduct = await this.discountProductsRepository.createQueryBuilder("discountProduct")
-        .leftJoinAndSelect("discountProduct.product", "product")
-        .leftJoinAndSelect("discountProduct.discount", "discount")
+      const discountProduct = await this.discountProductsRepository
+        .createQueryBuilder('discountProduct')
+        .leftJoinAndSelect('discountProduct.product', 'product')
+        .leftJoinAndSelect('discountProduct.discount', 'discount')
         .where({ id, isActive: true })
         .getOne();
 
       if (!discountProduct) {
         throw new ManagerError({
-          type: "NOT_FOUND",
-          message: "Product discount not found!",
-        })
+          type: 'NOT_FOUND',
+          message: 'Product discount not found!',
+        });
       }
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
         data: discountProduct,
-      }
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async update(id: string, updateDiscountProductDto: UpdateDiscountProductDto): Promise<ApiOneResponse<UpdateResult>> {
+  async update(
+    id: string,
+    updateDiscountProductDto: UpdateDiscountProductDto,
+  ): Promise<ApiOneResponse<UpdateResult>> {
     try {
-      const discountProduct = await this.discountProductsRepository.update({ id, isActive: true }, updateDiscountProductDto);
+      const discountProduct = await this.discountProductsRepository.update(
+        { id, isActive: true },
+        updateDiscountProductDto,
+      );
       if (discountProduct.affected === 0) {
         throw new ManagerError({
-          type: "NOT_FOUND",
-          message: "Product discount not found!",
-        })
+          type: 'NOT_FOUND',
+          message: 'Product discount not found!',
+        });
       }
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
         data: discountProduct,
-      }
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
@@ -128,22 +144,25 @@ export class DiscountProductsService {
 
   async remove(id: string): Promise<ApiOneResponse<UpdateResult>> {
     try {
-      const discountProduct = await this.discountProductsRepository.update({ id, isActive: true }, { isActive: false });
+      const discountProduct = await this.discountProductsRepository.update(
+        { id, isActive: true },
+        { isActive: false },
+      );
       if (discountProduct.affected === 0) {
         throw new ManagerError({
-          type: "NOT_FOUND",
-          message: "Product discount not found!",
-        })
+          type: 'NOT_FOUND',
+          message: 'Product discount not found!',
+        });
       }
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
         data: discountProduct,
-      }
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }

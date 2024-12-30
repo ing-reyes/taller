@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { StocksService } from './stocks.service';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
@@ -14,7 +24,7 @@ export class StocksController {
   }
 
   @Get()
-  findAll( @Query() paginationDto: PaginationDto ) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.stocksService.findAll(paginationDto);
   }
 
@@ -24,7 +34,10 @@ export class StocksController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateStockDto: UpdateStockDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateStockDto: UpdateStockDto,
+  ) {
     return this.stocksService.update(id, updateStockDto);
   }
 

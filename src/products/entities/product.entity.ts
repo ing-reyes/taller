@@ -1,39 +1,49 @@
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from "typeorm";
-import { BaseEntity } from "./../../common/config/base.entity";
-import { SupplierEntity } from "./../../suppliers/entities/supplier.entity";
-import { CategoryEntity } from "./../../categories/entities/category.entity";
-import { StockEntity } from "./../../stocks/entities/stock.entity";
-import { OrderDetailEntity } from "./../../order-details/entities/order-detail.entity";
-import { DiscountProductEntity } from "./../../discount-products/entities/discount-product.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { BaseEntity } from './../../common/config/base.entity';
+import { SupplierEntity } from './../../suppliers/entities/supplier.entity';
+import { CategoryEntity } from './../../categories/entities/category.entity';
+import { StockEntity } from './../../stocks/entities/stock.entity';
+import { OrderDetailEntity } from './../../order-details/entities/order-detail.entity';
+import { DiscountProductEntity } from './../../discount-products/entities/discount-product.entity';
 
 @Entity('product')
 export class ProductEntity extends BaseEntity {
-    @Column({type: 'varchar'})
-    name: string;
+  @Column({ type: 'varchar' })
+  name: string;
 
-    @Column({type: 'varchar', nullable: true})
-    description?: string;
+  @Column({ type: 'varchar', nullable: true })
+  description?: string;
 
-    @Column({type: 'float', default: 0})
-    price?: number = 0;
+  @Column({ type: 'float', default: 0 })
+  price?: number = 0;
 
-    @Column({type: 'int', default: 0})
-    unit?: number = 0;
+  @Column({ type: 'int', default: 0 })
+  unit?: number = 0;
 
-    @ManyToOne(()=> SupplierEntity, (supplier)=>supplier.products)
-    @JoinColumn({name:'supplier_id'})
-    supplier: string;
+  @ManyToOne(() => SupplierEntity, (supplier) => supplier.products)
+  @JoinColumn({ name: 'supplier_id' })
+  supplier: string;
 
-    @ManyToOne(()=> CategoryEntity, (category)=>category.products)
-    @JoinColumn({name:'category_id'})
-    category: string;
+  @ManyToOne(() => CategoryEntity, (category) => category.products)
+  @JoinColumn({ name: 'category_id' })
+  category: string;
 
-    @OneToMany(()=>StockEntity, (stocks)=>stocks.product)
-    stocks: StockEntity[];
+  @OneToMany(() => StockEntity, (stocks) => stocks.product)
+  stocks: StockEntity[];
 
-    @OneToMany(()=>OrderDetailEntity, (orderDetail)=>orderDetail.product)
-    orderDetails: OrderDetailEntity[];
+  @OneToMany(() => OrderDetailEntity, (orderDetail) => orderDetail.product)
+  orderDetails: OrderDetailEntity[];
 
-    @OneToMany(()=>DiscountProductEntity, (discountProduct)=>discountProduct.product)
-    discountProducts: DiscountProductEntity[];
+  @OneToMany(
+    () => DiscountProductEntity,
+    (discountProduct) => discountProduct.product,
+  )
+  discountProducts: DiscountProductEntity[];
 }

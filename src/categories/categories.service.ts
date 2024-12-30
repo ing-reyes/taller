@@ -6,25 +6,28 @@ import { ManagerError } from './../common/errors/manager.error';
 import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ApiAllResponse, ApiOneResponse } from './../common/interfaces/api-response.interface';
+import {
+  ApiAllResponse,
+  ApiOneResponse,
+} from './../common/interfaces/api-response.interface';
 
 @Injectable()
 export class CategoriesService {
-
   constructor(
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
-  ){}
+  ) {}
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<ApiOneResponse<CategoryEntity>> {
-    
+  async create(
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<ApiOneResponse<CategoryEntity>> {
     try {
-      const category = await this.categoryRepository.save(createCategoryDto)
-      if( !category ){
+      const category = await this.categoryRepository.save(createCategoryDto);
+      if (!category) {
         throw new ManagerError({
           type: 'CONFLICT',
           message: 'Category not created!',
-        })
+        });
       }
 
       return {
@@ -40,18 +43,23 @@ export class CategoriesService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<ApiAllResponse<CategoryEntity>> {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<ApiAllResponse<CategoryEntity>> {
     const { limit, page } = paginationDto;
     const skip = (page - 1) * limit;
 
     try {
-
       //const total = await this.categoryRepository.count( { where: {isActive: true} } );
       //const data = await this.categoryRepository.find({ where: {isActive: true}, take: limit, skip: skip  })
-      
+
       const [total, data] = await Promise.all([
-        this.categoryRepository.count( { where: {isActive: true} } ),
-        this.categoryRepository.find({ where: {isActive: true}, take: limit, skip: skip  })
+        this.categoryRepository.count({ where: { isActive: true } }),
+        this.categoryRepository.find({
+          where: { isActive: true },
+          take: limit,
+          skip: skip,
+        }),
       ]);
 
       const lastPage = Math.ceil(total / limit);
@@ -68,7 +76,7 @@ export class CategoriesService {
           lastPage,
           total,
         },
-        data
+        data,
       };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
@@ -77,15 +85,16 @@ export class CategoriesService {
 
   async findOne(id: string): Promise<ApiOneResponse<CategoryEntity>> {
     try {
-      const category = await this.categoryRepository.createQueryBuilder('category')
-      .where({id, isActive:true})
-      .leftJoinAndSelect('category.products','products')
-      .getOne()
+      const category = await this.categoryRepository
+        .createQueryBuilder('category')
+        .where({ id, isActive: true })
+        .leftJoinAndSelect('category.products', 'products')
+        .getOne();
       if (!category) {
         throw new ManagerError({
           type: 'NOT_FOUND',
-          message: "Category not found",
-        })
+          message: 'Category not found',
+        });
       }
 
       return {
@@ -95,15 +104,21 @@ export class CategoriesService {
           error: null,
         },
         data: category,
-      }
+      };
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<ApiOneResponse<UpdateResult>> {
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<ApiOneResponse<UpdateResult>> {
     try {
-      const category = await this.categoryRepository.update({id, isActive: true}, updateCategoryDto)
+      const category = await this.categoryRepository.update(
+        { id, isActive: true },
+        updateCategoryDto,
+      );
       if (category.affected === 0) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -113,7 +128,7 @@ export class CategoriesService {
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
@@ -126,7 +141,10 @@ export class CategoriesService {
 
   async remove(id: string): Promise<ApiOneResponse<UpdateResult>> {
     try {
-      const category = await this.categoryRepository.update({id, isActive: true}, { isActive: false });
+      const category = await this.categoryRepository.update(
+        { id, isActive: true },
+        { isActive: false },
+      );
       if (category.affected === 0) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -136,7 +154,7 @@ export class CategoriesService {
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },

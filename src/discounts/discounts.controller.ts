@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { DiscountsService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
@@ -14,7 +24,7 @@ export class DiscountsController {
   }
 
   @Get()
-  findAll( @Query() paginationDto: PaginationDto) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.discountsService.findAll(paginationDto);
   }
 
@@ -24,7 +34,10 @@ export class DiscountsController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateDiscountDto: UpdateDiscountDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDiscountDto: UpdateDiscountDto,
+  ) {
     return this.discountsService.update(id, updateDiscountDto);
   }
 

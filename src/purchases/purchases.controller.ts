@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { PurchasesService } from './purchases.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
@@ -14,8 +24,8 @@ export class PurchasesController {
   }
 
   @Get()
-  findAll( @Query() paginationDto: PaginationDto ) {
-    return this.purchasesService.findAll( paginationDto );
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.purchasesService.findAll(paginationDto);
   }
 
   @Get(':id')
@@ -24,7 +34,10 @@ export class PurchasesController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updatePurchaseDto: UpdatePurchaseDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updatePurchaseDto: UpdatePurchaseDto,
+  ) {
     return this.purchasesService.update(id, updatePurchaseDto);
   }
 

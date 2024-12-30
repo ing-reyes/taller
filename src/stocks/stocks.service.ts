@@ -8,18 +8,21 @@ import { StockEntity } from './entities/stock.entity';
 import { ManagerError } from './../common/errors/manager.error';
 import { PaginationDto } from '../common/dtos/pagination/pagination.dto';
 import { ResponseAllStocks } from './interfaces/response-stocks.interface';
-import { ApiAllResponse, ApiOneResponse } from 'src/common/interfaces/api-response.interface';
+import {
+  ApiAllResponse,
+  ApiOneResponse,
+} from 'src/common/interfaces/api-response.interface';
 
 @Injectable()
 export class StocksService {
-
   constructor(
     @InjectRepository(StockEntity)
     private readonly stockRepository: Repository<StockEntity>,
-  ) { }
+  ) {}
 
-  async create(createStockDto: CreateStockDto): Promise<ApiOneResponse<StockEntity>> {
-
+  async create(
+    createStockDto: CreateStockDto,
+  ): Promise<ApiOneResponse<StockEntity>> {
     try {
       const stock = await this.stockRepository.save(createStockDto);
       if (!stock) {
@@ -31,7 +34,7 @@ export class StocksService {
 
       return {
         status: {
-          statusMsg: "CREATED",
+          statusMsg: 'CREATED',
           statusCode: HttpStatus.CREATED,
           error: null,
         },
@@ -42,22 +45,27 @@ export class StocksService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<ApiAllResponse<StockEntity>> {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<ApiAllResponse<StockEntity>> {
     const { limit, page } = paginationDto;
     const skip = (page - 1) * limit;
 
     try {
-
       const [total, data] = await Promise.all([
         this.stockRepository.count({ where: { isActive: true } }),
-        this.stockRepository.find({ where: { isActive: true }, take: limit, skip: skip })
+        this.stockRepository.find({
+          where: { isActive: true },
+          take: limit,
+          skip: skip,
+        }),
       ]);
 
       const lastPage = Math.ceil(total / limit);
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
@@ -76,19 +84,20 @@ export class StocksService {
 
   async findOne(id: string): Promise<ApiOneResponse<StockEntity>> {
     try {
-      const stock = await this.stockRepository.createQueryBuilder('stock')
-      .where({id, isActive:true})
-      .getOne()
+      const stock = await this.stockRepository
+        .createQueryBuilder('stock')
+        .where({ id, isActive: true })
+        .getOne();
       if (!stock) {
         throw new ManagerError({
           type: 'NOT_FOUND',
-          message: "Stock not found",
-        })
+          message: 'Stock not found',
+        });
       }
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
@@ -99,9 +108,15 @@ export class StocksService {
     }
   }
 
-  async update(id: string, updateStockDto: UpdateStockDto):Promise<ApiOneResponse<UpdateResult>> {
+  async update(
+    id: string,
+    updateStockDto: UpdateStockDto,
+  ): Promise<ApiOneResponse<UpdateResult>> {
     try {
-      const stock = await this.stockRepository.update({id, isActive: true}, updateStockDto)
+      const stock = await this.stockRepository.update(
+        { id, isActive: true },
+        updateStockDto,
+      );
       if (stock.affected === 0) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -111,7 +126,7 @@ export class StocksService {
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },
@@ -122,9 +137,12 @@ export class StocksService {
     }
   }
 
-  async remove(id: string):Promise<ApiOneResponse<UpdateResult>> {
+  async remove(id: string): Promise<ApiOneResponse<UpdateResult>> {
     try {
-      const stock = await this.stockRepository.update({id, isActive: true}, { isActive: false });
+      const stock = await this.stockRepository.update(
+        { id, isActive: true },
+        { isActive: false },
+      );
       if (stock.affected === 0) {
         throw new ManagerError({
           type: 'NOT_FOUND',
@@ -134,7 +152,7 @@ export class StocksService {
 
       return {
         status: {
-          statusMsg: "OK",
+          statusMsg: 'OK',
           statusCode: HttpStatus.OK,
           error: null,
         },

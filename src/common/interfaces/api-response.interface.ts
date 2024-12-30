@@ -1,25 +1,25 @@
-import { HttpStatus } from "@nestjs/common";
+import { HttpStatus } from '@nestjs/common';
 
 interface Metadata {
-    page: number;
-    lastPage: number;
-    limit: number;
-    total: number;
+  page: number;
+  lastPage: number;
+  limit: number;
+  total: number;
 }
 
 interface Status {
-    statusMsg: keyof typeof HttpStatus;
-    statusCode: HttpStatus;
-    error: string | null;
+  statusMsg: keyof typeof HttpStatus;
+  statusCode: HttpStatus;
+  error: string | null;
 }
 
 export interface ApiOneResponse<T> {
-    status: Status,
-    data: T;
+  status: Status;
+  data: T;
 }
 
 export interface ApiAllResponse<T> {
-    meta: Metadata,
-    status: Status,
-    data: T[];
+  meta: Metadata;
+  status: Status;
+  data: T[];
 }

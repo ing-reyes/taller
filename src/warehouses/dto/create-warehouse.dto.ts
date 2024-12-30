@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateWarehouseDto {
-    @IsString()
-    @IsOptional()
-    description?: string;
-    
-    @IsString()
-    @IsNotEmpty()
-    stock: string;
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  stock: string;
 }

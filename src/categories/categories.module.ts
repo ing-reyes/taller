@@ -15,6 +15,6 @@ import { UsersModule } from './../users/users.module';
     TypeOrmModule.forFeature([CategoryEntity]),
     AuthModule,
     UsersModule,
-  ]
+  ],
 })
 export class CategoriesModule {}
