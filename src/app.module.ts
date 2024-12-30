@@ -25,7 +25,7 @@ import { DiscountProductsModule } from './discount-products/discount-products.mo
 @Module({
   imports: [ 
     ConfigModule.forRoot({
-      envFilePath: `.env.development`,
+      envFilePath: `.env.${ process.env.NODE_ENV.trim() }`,
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(DataSourceConfig),

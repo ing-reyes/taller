@@ -4,7 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 
 ConfigModule.forRoot({
-    envFilePath: `.env.development`,
+    envFilePath: `.env.${ process.env.NODE_ENV.trim() }`,
 });
 
 const configService = new ConfigService();
