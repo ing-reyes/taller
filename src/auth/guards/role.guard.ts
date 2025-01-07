@@ -1,19 +1,16 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import {
   ADMIN_KEY,
   PUBLIC_KEY,
-  USER_KEY,
-} from 'src/common/constants/keys-roles.constant';
+} from './../../common/constants/keys-roles.constant';
 import { UserRole } from './../../common/enums/user-role.enum';
 import { ManagerError } from './../../common/errors/manager.error';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -62,7 +59,5 @@ export class RoleGuard implements CanActivate {
     } catch (error) {
       ManagerError.createSignatureError(error.message);
     }
-
-    return true;
   }
 }
