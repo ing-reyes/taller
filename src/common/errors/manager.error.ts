@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { error } from 'console';
 
 export class ManagerError extends Error {
   constructor({
@@ -19,8 +18,8 @@ export class ManagerError extends Error {
     if (name) {
       throw new HttpException(
         {
-          error: HttpStatus[name],
-          statusCode: name,
+          error: name,
+          statusCode: HttpStatus[name],
           message: description,
         },
         HttpStatus[name],
