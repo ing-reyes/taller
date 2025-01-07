@@ -6,16 +6,15 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { OmitPassword } from 'src/common/types/users/omit-password.user';
+import { OmitPassword } from './../../common/types/users/omit-password.user';
 import { UsersService } from '../../users/users.service';
-import { ManagerError } from 'src/common/errors/manager.error';
-import { error } from 'console';
+import { ManagerError } from './../../common/errors/manager.error';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
-    private usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
