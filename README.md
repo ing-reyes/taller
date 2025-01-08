@@ -32,6 +32,10 @@
 $ npm install
 ```
 
+## Fill in the Environment Variables
+
+$ Rename the `.env.example` file to `.env.development` or `.env.production`
+
 ## Run image Docker
 
 ```bash
