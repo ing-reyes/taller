@@ -25,6 +25,10 @@ export class RoleGuard implements CanActivate {
       ROLES_KEY,
       context.getHandler(),
     );
+    const UNAUTHORIZED_ERROR = new ManagerError({
+      type: 'UNAUTHORIZED',
+      message: 'Unauthorized!',
+    });
 
     const user = request['user'];
 
@@ -32,30 +36,21 @@ export class RoleGuard implements CanActivate {
 
     try {
       if (isRoles === undefined) {
-        if (!isAdmin) {
+        if (!isAdmin || user.role === isAdmin) {
           return true;
         }
-
-        if (user.role === isAdmin) {
-          return true;
-        }
-
-        throw new ManagerError({
-          type: 'UNAUTHORIZED',
-          message: 'Unauthorized!',
-        });
+        throw UNAUTHORIZED_ERROR;
       }
-
-      if (user.role === UserRole.ADMIN) return true;
-
-      const isAuth = isRoles.some((rol) => rol === user.role);
+      
+      if (user.role === UserRole.ADMIN) {
+        return true;
+      }
+      
+      const isAuth = isRoles.includes(user.role);
       if (!isAuth) {
-        throw new ManagerError({
-          type: 'UNAUTHORIZED',
-          message: 'Unauthorized!',
-        });
+        throw UNAUTHORIZED_ERROR;
       }
-
+      
       return true;
     } catch (error) {
       ManagerError.createSignatureError(error.message);
