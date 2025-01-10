@@ -4,6 +4,7 @@ import { Request } from 'express';
 import {
   ADMIN_KEY,
   PUBLIC_KEY,
+  ROLES_KEY,
 } from './../../common/constants/keys-roles.constant';
 import { UserRole } from './../../common/enums/user-role.enum';
 import { ManagerError } from './../../common/errors/manager.error';
@@ -21,7 +22,7 @@ export class RoleGuard implements CanActivate {
       context.getHandler(),
     );
     const isRoles = this.reflector.get<Array<keyof typeof UserRole>>(
-      UserRole,
+      ROLES_KEY,
       context.getHandler(),
     );
 
